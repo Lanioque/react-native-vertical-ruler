@@ -1,6 +1,6 @@
 {
   "name": "react-native-vertical-ruler",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A highly customizable vertical ruler component for React Native with smooth animations and magnification effects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
