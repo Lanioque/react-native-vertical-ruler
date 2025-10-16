@@ -8,6 +8,12 @@ import Animated, {
   Easing 
 } from 'react-native-reanimated';
 
+export interface UnitConfig {
+  label: string;
+  symbol: string;
+  convertTo?: (value: number, targetUnit: UnitConfig) => number;
+}
+
 export interface VerticalRulerConfig {
   // Value configuration
   minValue?: number;
@@ -16,6 +22,9 @@ export interface VerticalRulerConfig {
   
   // Display configuration
   unit?: string;
+  units?: UnitConfig[];
+  defaultUnitIndex?: number;
+  showUnitSwitcher?: boolean;
   title?: string;
   showDate?: boolean;
   dateFormat?: Intl.DateTimeFormatOptions;
@@ -69,6 +78,7 @@ export interface VerticalRulerConfig {
   
   // Callbacks
   onValueChange?: (value: number) => void;
+  onUnitChange?: (unit: UnitConfig, unitIndex: number) => void;
 }
 
 export interface VerticalRulerHandle {
@@ -76,6 +86,8 @@ export interface VerticalRulerHandle {
   decrement: () => void;
   setValue: (value: number) => void;
   getValue: () => number;
+  switchUnit: (index: number) => void;
+  getCurrentUnit: () => UnitConfig | string;
 }
 
 interface VerticalRulerProps extends VerticalRulerConfig {}
@@ -90,6 +102,37 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
   maxValue: 220,
   step: 1,
   unit: 'cm',
+  units: [
+    {
+      label: 'Centimeters',
+      symbol: 'cm',
+      convertTo: (value, targetUnit) => {
+        if (targetUnit.symbol === 'in') return value / 2.54;
+        if (targetUnit.symbol === 'ft') return value / 30.48;
+        return value;
+      },
+    },
+    {
+      label: 'Inches',
+      symbol: 'in',
+      convertTo: (value, targetUnit) => {
+        if (targetUnit.symbol === 'cm') return value * 2.54;
+        if (targetUnit.symbol === 'ft') return value / 12;
+        return value;
+      },
+    },
+    {
+      label: 'Feet',
+      symbol: 'ft',
+      convertTo: (value, targetUnit) => {
+        if (targetUnit.symbol === 'cm') return value * 30.48;
+        if (targetUnit.symbol === 'in') return value * 12;
+        return value;
+      },
+    },
+  ],
+  defaultUnitIndex: 0,
+  showUnitSwitcher: false,
   title: 'Enter Your Height',
   showDate: true,
   dateFormat: { month: 'short', day: '2-digit', year: 'numeric' },
@@ -132,6 +175,7 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
     xl: 20,
   },
   onValueChange: (() => {}) as any,
+  onUnitChange: (() => {}) as any,
 };
 
 const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle, VerticalRulerProps> = (props, ref) => {
@@ -150,6 +194,9 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
     maxValue,
     step,
     unit,
+    units,
+    defaultUnitIndex,
+    showUnitSwitcher,
     title,
     showDate,
     dateFormat,
@@ -165,9 +212,11 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
     fontSize: FONT_SIZES,
     borderRadius: BORDER_RADIUS,
     onValueChange,
+    onUnitChange,
   } = config;
 
   const [value, setValue] = useState(minValue);
+  const [currentUnitIndex, setCurrentUnitIndex] = useState(defaultUnitIndex);
   const cursorAnimY = useSharedValue(0);
   const valueRef = useRef(minValue);
   const initialYRef = useRef(0);
@@ -237,7 +286,39 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
       updateTickScales(newPosition);
     },
     getValue: () => value,
-  }), [value, step, minValue, maxValue, RULER_HEIGHT, onValueChange]);
+    switchUnit: (index: number) => {
+      if (index < 0 || index >= units.length) {
+        console.warn(`Invalid unit index: ${index}`);
+        return;
+      }
+      if (index === currentUnitIndex) return;
+
+      const currentUnit = units[currentUnitIndex];
+      const targetUnit = units[index];
+      
+      // Convert value to new unit
+      let convertedValue = value;
+      if (currentUnit.convertTo) {
+        convertedValue = currentUnit.convertTo(value, targetUnit);
+      }
+      
+      convertedValue = Math.max(minValue, Math.min(maxValue, convertedValue));
+      setValue(convertedValue);
+      valueRef.current = convertedValue;
+      setCurrentUnitIndex(index);
+      
+      const newPosition = ((maxValue - convertedValue) / (maxValue - minValue)) * RULER_HEIGHT;
+      cursorAnimY.value = withTiming(newPosition, {
+        duration: 200,
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+      });
+      updateTickScales(newPosition);
+      
+      onValueChange?.(convertedValue);
+      onUnitChange?.(targetUnit, index);
+    },
+    getCurrentUnit: () => units[currentUnitIndex] || unit,
+  }), [value, step, minValue, maxValue, RULER_HEIGHT, onValueChange, onUnitChange, units, currentUnitIndex, unit]);
 
   const updateTickScales = (cursorY: number) => {
     if (!enableMagnification || !ticksRef.current) return;
@@ -453,7 +534,36 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
             )}
           </View>
 
-          <Text style={styles(COLORS, SPACING, FONT_SIZES).unitLabel}>{unit}</Text>
+          {showUnitSwitcher && units.length > 0 ? (
+            <View style={styles(COLORS, SPACING, FONT_SIZES).unitSwitcher}>
+              {units.map((u, index) => (
+                <Pressable
+                  key={u.symbol}
+                  onPress={() => ref && (ref as any).current?.switchUnit(index)}
+                  style={({ pressed }) => [
+                    styles(COLORS, SPACING, FONT_SIZES).unitButton,
+                    {
+                      opacity: pressed ? 0.7 : 1,
+                      backgroundColor: currentUnitIndex === index ? COLORS.accent : COLORS.primaryLight,
+                    }
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles(COLORS, SPACING, FONT_SIZES).unitButtonText,
+                      { color: currentUnitIndex === index ? COLORS.white : COLORS.primary }
+                    ]}
+                  >
+                    {u.symbol}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles(COLORS, SPACING, FONT_SIZES).unitLabel}>
+              {units[currentUnitIndex]?.symbol || unit}
+            </Text>
+          )}
           {showDate && (
             <Text style={styles(COLORS, SPACING, FONT_SIZES).dateText}>
               {new Date().toLocaleDateString('en-US', dateFormat)}
@@ -615,6 +725,23 @@ const styles = (colors: any, spacing: any, fontSize: any) =>
       fontSize: fontSize.lg,
       fontWeight: '700',
       color: colors.primary,
+    },
+    unitSwitcher: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      width: '100%',
+      marginTop: spacing.xs,
+    },
+    unitButton: {
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    unitButtonText: {
+      fontSize: fontSize.sm,
+      fontWeight: '600',
     },
   });
 

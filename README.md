@@ -86,6 +86,14 @@ export default function HeightSelector() {
 | `magnificationRadius` | number | 80 | Radius in pixels for magnification effect |
 | `maxScale` | number | 1.5 | Maximum scale factor for magnified ticks |
 
+#### Unit Switcher Configuration
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `units` | UnitConfig[] | [cm, in, ft] | Array of unit configurations with conversion functions |
+| `defaultUnitIndex` | number | 0 | Index of the initial unit to display |
+| `showUnitSwitcher` | boolean | false | Show interactive unit switcher buttons |
+
 #### Styling
 
 All styling is fully customizable:
@@ -190,6 +198,112 @@ All styling is fully customizable:
   title="Select Your Height"
   // Users can only adjust value via dragging the ruler
 />
+```
+
+### Unit Switcher with Built-in Conversions
+
+```tsx
+<VerticalRuler
+  minValue={150}
+  maxValue={220}
+  showUnitSwitcher={true}
+  defaultUnitIndex={0}
+  // Users can switch between cm, inches, and feet with automatic conversion
+/>
+```
+
+### Custom Units with Custom Conversion Functions
+
+```tsx
+import { VerticalRuler, UnitConfig } from 'react-native-vertical-ruler';
+
+const customUnits: UnitConfig[] = [
+  {
+    label: 'Kilograms',
+    symbol: 'kg',
+    convertTo: (value, targetUnit) => {
+      if (targetUnit.symbol === 'lbs') return value * 2.20462;
+      return value;
+    },
+  },
+  {
+    label: 'Pounds',
+    symbol: 'lbs',
+    convertTo: (value, targetUnit) => {
+      if (targetUnit.symbol === 'kg') return value / 2.20462;
+      return value;
+    },
+  },
+];
+
+export default function WeightSelector() {
+  return (
+    <VerticalRuler
+      minValue={40}
+      maxValue={150}
+      step={0.5}
+      units={customUnits}
+      defaultUnitIndex={0}
+      showUnitSwitcher={true}
+      title="Select Your Weight"
+      onUnitChange={(unit, index) => {
+        console.log(`Switched to ${unit.label}`);
+      }}
+    />
+  );
+}
+```
+
+### Programmatic Unit Switching
+
+```tsx
+import { useRef } from 'react';
+import { VerticalRuler, VerticalRulerHandle, UnitConfig } from 'react-native-vertical-ruler';
+
+export default function MyComponent() {
+  const rulerRef = useRef<VerticalRulerHandle>(null);
+  
+  const customUnits: UnitConfig[] = [
+    {
+      label: 'Kilograms',
+      symbol: 'kg',
+      convertTo: (value, targetUnit) => {
+        if (targetUnit.symbol === 'lbs') return value * 2.20462;
+        return value;
+      },
+    },
+    {
+      label: 'Pounds',
+      symbol: 'lbs',
+      convertTo: (value, targetUnit) => {
+        if (targetUnit.symbol === 'kg') return value / 2.20462;
+        return value;
+      },
+    },
+  ];
+
+  return (
+    <>
+      <VerticalRuler
+        ref={rulerRef}
+        units={customUnits}
+        minValue={40}
+        maxValue={150}
+      />
+      <Button
+        title="Switch to Pounds"
+        onPress={() => rulerRef.current?.switchUnit(1)}
+      />
+      <Button
+        title="Get Current Unit"
+        onPress={() => {
+          const unit = rulerRef.current?.getCurrentUnit();
+          console.log('Current unit:', unit);
+        }}
+      />
+    </>
+  );
+}
 ```
 
 ## TypeScript Support
