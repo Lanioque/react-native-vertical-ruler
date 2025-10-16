@@ -168,7 +168,8 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
   const ticks = useMemo(() => {
     const tickArray: TickInfo[] = [];
     for (let v = minValue; v <= maxValue; v += tickInterval) {
-      const position = ((v - minValue) / (maxValue - minValue)) * RULER_HEIGHT;
+      // Invert position so min is at bottom (RULER_HEIGHT) and max is at top (0)
+      const position = ((maxValue - v) / (maxValue - minValue)) * RULER_HEIGHT;
       tickArray.push({ value: v, position });
     }
     return tickArray;
@@ -208,7 +209,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
     valueRef.current = newValue;
     onValueChange?.(newValue);
 
-    const newPosition = ((newValue - minValue) / (maxValue - minValue)) * RULER_HEIGHT;
+    const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
       duration: 300,
       easing: Easing.out(Easing.cubic),
@@ -222,7 +223,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
     valueRef.current = newValue;
     onValueChange?.(newValue);
 
-    const newPosition = ((newValue - minValue) / (maxValue - minValue)) * RULER_HEIGHT;
+    const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
       duration: 300,
       easing: Easing.out(Easing.cubic),
@@ -247,7 +248,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
         const clampedDrag = Math.max(0, Math.min(RULER_HEIGHT, dragFromRulerTop));
 
         const percentage = clampedDrag / RULER_HEIGHT;
-        const newValue = minValue + percentage * (maxValue - minValue);
+        const newValue = maxValue - percentage * (maxValue - minValue);
         const steppedValue = Math.round(newValue / step) * step;
         const newPosition = (clampedDrag / RULER_HEIGHT) * RULER_HEIGHT;
 
@@ -265,7 +266,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
         const clampedDrag = Math.max(0, Math.min(RULER_HEIGHT, dragFromRulerTop));
 
         const percentage = clampedDrag / RULER_HEIGHT;
-        const newValue = minValue + percentage * (maxValue - minValue);
+        const newValue = maxValue - percentage * (maxValue - minValue);
         const steppedValue = Math.round(newValue / step) * step;
         const newPosition = (clampedDrag / RULER_HEIGHT) * RULER_HEIGHT;
 
