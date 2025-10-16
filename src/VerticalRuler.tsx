@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, PanResponder, Pressable } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
+  SharedValue,
   withTiming,
   Easing 
 } from 'react-native-reanimated';
@@ -18,6 +19,7 @@ export interface VerticalRulerConfig {
   title?: string;
   showDate?: boolean;
   dateFormat?: Intl.DateTimeFormatOptions;
+  enableButtons?: boolean;
   
   // Ruler configuration
   rulerHeight?: number;
@@ -84,6 +86,7 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
   title: 'Enter Your Height',
   showDate: true,
   dateFormat: { month: 'short', day: '2-digit', year: 'numeric' },
+  enableButtons: true,
   rulerHeight: 400,
   rulerWidth: 80,
   tickInterval: 5,
@@ -143,6 +146,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
     title,
     showDate,
     dateFormat,
+    enableButtons,
     rulerHeight: RULER_HEIGHT,
     rulerWidth: RULER_WIDTH,
     tickInterval,
@@ -371,27 +375,31 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
         <View style={styles(COLORS, SPACING, FONT_SIZES).rightContent}>
           <View style={styles(COLORS, SPACING, FONT_SIZES).valueSection}>
-            <Pressable
-              onPress={handleDecrement}
-              style={({ pressed }) => [
-                styles(COLORS, SPACING, FONT_SIZES).adjustButton,
-                { opacity: pressed ? 0.7 : 1 }
-              ]}
-            >
-              <Text style={styles(COLORS, SPACING, FONT_SIZES).adjustButtonText}>−</Text>
-            </Pressable>
+            {enableButtons && (
+              <Pressable
+                onPress={handleDecrement}
+                style={({ pressed }) => [
+                  styles(COLORS, SPACING, FONT_SIZES).adjustButton,
+                  { opacity: pressed ? 0.7 : 1 }
+                ]}
+              >
+                <Text style={styles(COLORS, SPACING, FONT_SIZES).adjustButtonText}>−</Text>
+              </Pressable>
+            )}
 
             <Text style={styles(COLORS, SPACING, FONT_SIZES).valueText}>{value.toFixed(1)}</Text>
 
-            <Pressable
-              onPress={handleIncrement}
-              style={({ pressed }) => [
-                styles(COLORS, SPACING, FONT_SIZES).adjustButton,
-                { opacity: pressed ? 0.7 : 1 }
-              ]}
-            >
-              <Text style={styles(COLORS, SPACING, FONT_SIZES).adjustButtonText}>+</Text>
-            </Pressable>
+            {enableButtons && (
+              <Pressable
+                onPress={handleIncrement}
+                style={({ pressed }) => [
+                  styles(COLORS, SPACING, FONT_SIZES).adjustButton,
+                  { opacity: pressed ? 0.7 : 1 }
+                ]}
+              >
+                <Text style={styles(COLORS, SPACING, FONT_SIZES).adjustButtonText}>+</Text>
+              </Pressable>
+            )}
           </View>
 
           <Text style={styles(COLORS, SPACING, FONT_SIZES).unitLabel}>{unit}</Text>
@@ -412,7 +420,7 @@ interface TickComponentProps {
   isMajorTick: boolean;
   colors: any;
   rulerWidth: number;
-  tickScaleMap: Map<number, Animated.SharedValue<number>>;
+  tickScaleMap: Map<number, SharedValue<number>>;
 }
 
 const TickComponent: React.FC<TickComponentProps> = ({

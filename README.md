@@ -68,6 +68,7 @@ export default function HeightSelector() {
 | `title` | string | 'Enter Your Height' | Title text shown above ruler |
 | `showDate` | boolean | true | Show current date below value |
 | `dateFormat` | DateTimeFormatOptions | See default | Intl date format options |
+| `enableButtons` | boolean | true | Show +/- increment/decrement buttons |
 
 #### Ruler Configuration
 
@@ -178,6 +179,16 @@ All styling is fully customizable:
   title="Height"
   spacing={{ xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24 }}
   fontSize={{ xs: 10, sm: 12, md: 14, lg: 16, xl: 18 }}
+/>
+```
+
+### Gesture-Only Mode (Disable Buttons)
+
+```tsx
+<VerticalRuler
+  enableButtons={false}
+  title="Select Your Height"
+  // Users can only adjust value via dragging the ruler
 />
 ```
 
