@@ -211,7 +211,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
     const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
-      duration: 250,
+      duration: 50,
       easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
     });
     updateTickScales(newPosition);
@@ -225,7 +225,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
     const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
-      duration: 250,
+      duration: 50,
       easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
     });
     updateTickScales(newPosition);
@@ -254,7 +254,7 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
         // Smooth drag feedback with minimal delay
         cursorAnimY.value = withTiming(newPosition, {
-          duration: 50,
+          duration: 10,
           easing: Easing.linear,
         });
         updateTickScales(newPosition);
