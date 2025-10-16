@@ -1,0 +1,52 @@
+{
+  "name": "react-native-vertical-ruler",
+  "version": "1.0.0",
+  "description": "A highly customizable vertical ruler component for React Native with smooth animations and magnification effects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "react-native",
+    "ruler",
+    "vertical-ruler",
+    "slider",
+    "height",
+    "measurement",
+    "animation",
+    "reanimated",
+    "component"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/react-native-vertical-ruler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/react-native-vertical-ruler/issues"
+  },
+  "homepage": "https://github.com/yourusername/react-native-vertical-ruler#readme",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-native": "^0.71.0",
+    "react-native-reanimated": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-native": "^0.71.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
