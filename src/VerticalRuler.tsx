@@ -76,6 +76,15 @@ export interface VerticalRulerConfig {
     xl?: number;
   };
   
+  // Cursor configuration
+  cursorProps?: {
+    height?: number;
+    width?: string | number;
+    marginTop?: number;
+    paddingLeft?: number;
+    borderRadius?: number;
+  };
+  
   // Callbacks
   onValueChange?: (value: number) => void;
   onUnitChange?: (unit: UnitConfig, unitIndex: number) => void;
@@ -174,6 +183,13 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
     lg: 16,
     xl: 20,
   },
+  cursorProps: {
+    height: 4,
+    width: '100%',
+    marginTop: -2,
+    paddingLeft: 8,
+    borderRadius: 6,
+  },
   onValueChange: (() => {}) as any,
   onUnitChange: (() => {}) as any,
 };
@@ -186,6 +202,7 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
     spacing: { ...DEFAULT_CONFIG.spacing, ...props.spacing },
     fontSize: { ...DEFAULT_CONFIG.fontSize, ...props.fontSize },
     borderRadius: { ...DEFAULT_CONFIG.borderRadius, ...props.borderRadius },
+    cursorProps: { ...DEFAULT_CONFIG.cursorProps, ...props.cursorProps },
     ...props,
   }), [props]);
 
@@ -211,6 +228,7 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
     spacing: SPACING,
     fontSize: FONT_SIZES,
     borderRadius: BORDER_RADIUS,
+    cursorProps,
     onValueChange,
     onUnitChange,
   } = config;
@@ -497,11 +515,18 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
           <Animated.View
             style={[
               styles(COLORS, SPACING, FONT_SIZES).cursor,
+              {
+                marginTop: cursorProps.marginTop,
+                paddingLeft: cursorProps.paddingLeft,
+              },
               cursorAnimatedStyle
             ]}
             pointerEvents="none"
           >
-            <View style={styles(COLORS, SPACING, FONT_SIZES).cursorBar} />
+            <View style={[styles(COLORS, SPACING, FONT_SIZES).cursorBar, {
+              height: cursorProps.height,
+              borderRadius: cursorProps.borderRadius,
+            }]} />
           </Animated.View>
         </View>
 
