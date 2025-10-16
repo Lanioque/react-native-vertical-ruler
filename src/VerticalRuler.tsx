@@ -657,9 +657,10 @@ const styles = (colors: any, spacing: any, fontSize: any) =>
       width: '100%',
       height: 4,
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       left: 0,
       marginTop: -2,
+      paddingLeft: 8,
     },
     cursorBar: {
       width: '200%',
