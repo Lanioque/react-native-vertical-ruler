@@ -121,7 +121,7 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
     lg: 16,
     xl: 20,
   },
-  onValueChange: undefined,
+  onValueChange: (() => {}) as any,
 };
 
 const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
@@ -324,7 +324,6 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
             styles(COLORS, SPACING, FONT_SIZES).tickLabel,
             { top: tick.position - 8 }
           ]}
-          pointerEvents="none"
         >
           {tick.value}
         </Text>
@@ -341,7 +340,6 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
             styles(COLORS, SPACING, FONT_SIZES).tickLabelsContainer,
             { height: RULER_HEIGHT }
           ]}
-          pointerEvents="none"
         >
           {renderTickLabels()}
         </View>
