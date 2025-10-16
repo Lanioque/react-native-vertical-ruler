@@ -11,6 +11,12 @@ A highly customizable, smooth vertical ruler component for React Native with mag
 🎨 **Fully Customizable** - Colors, sizes, spacing, fonts - all configurable
 📱 **Production Ready** - TypeScript support, comprehensive prop validation
 
+## Demo
+
+<img src="./Screenshot_20251016-044053.png" alt="Vertical Ruler Component Demo" width="400" />
+
+The component in action showing height measurement selection at 175.0 cm with smooth animations, magnification effects, and interactive +/- controls.
+
 ## Installation
 
 ```bash
