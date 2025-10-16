@@ -83,6 +83,9 @@ export interface VerticalRulerConfig {
     marginTop?: number;
     paddingLeft?: number;
     borderRadius?: number;
+    color?: string;
+    barWidth?: string | number;
+    opacity?: number;
   };
   
   // Callbacks
@@ -189,6 +192,9 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
     marginTop: -2,
     paddingLeft: 8,
     borderRadius: 6,
+    color: '#F59E0B',
+    barWidth: '200%',
+    opacity: 1,
   },
   onValueChange: (() => {}) as any,
   onUnitChange: (() => {}) as any,
@@ -516,16 +522,19 @@ const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle
             style={[
               styles(COLORS, SPACING, FONT_SIZES).cursor,
               {
-                marginTop: cursorProps.marginTop,
-                paddingLeft: cursorProps.paddingLeft,
+                marginTop: cursorProps?.marginTop ?? -2,
+                paddingLeft: cursorProps?.paddingLeft ?? 8,
               },
               cursorAnimatedStyle
             ]}
             pointerEvents="none"
           >
             <View style={[styles(COLORS, SPACING, FONT_SIZES).cursorBar, {
-              height: cursorProps.height,
-              borderRadius: cursorProps.borderRadius,
+              width: cursorProps?.barWidth ?? '200%',
+              height: cursorProps?.height ?? 4,
+              backgroundColor: cursorProps?.color ?? '#F59E0B',
+              borderRadius: cursorProps?.borderRadius ?? 6,
+              opacity: cursorProps?.opacity ?? 1,
             }]} />
           </Animated.View>
         </View>

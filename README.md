@@ -99,10 +99,13 @@ export default function HeightSelector() {
 ```typescript
 {
   height?: number;           // Cursor bar height (default: 4)
-  width?: string | number;   // Cursor bar width (default: '100%')
+  width?: string | number;   // Cursor container width (default: '100%')
   marginTop?: number;        // Vertical offset (default: -2)
   paddingLeft?: number;      // Horizontal padding (default: 8)
   borderRadius?: number;     // Border radius (default: 6)
+  color?: string;            // Cursor bar color (default: '#F59E0B')
+  barWidth?: string | number; // Cursor bar width (default: '200%')
+  opacity?: number;          // Cursor bar opacity (default: 1)
 }
 ```
 
@@ -184,6 +187,9 @@ All styling is fully customizable:
     marginTop: -3,
     paddingLeft: 10,
     borderRadius: 8,
+    color: '#FF6B6B',      // Custom color
+    barWidth: '150%',      // Cursor bar width
+    opacity: 0.9,          // Transparency
   }}
 />
 ```
