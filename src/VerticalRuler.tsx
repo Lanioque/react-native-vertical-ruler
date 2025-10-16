@@ -211,8 +211,8 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
     const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
+      duration: 250,
+      easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
     });
     updateTickScales(newPosition);
   };
@@ -225,8 +225,8 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
 
     const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
     cursorAnimY.value = withTiming(newPosition, {
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
+      duration: 250,
+      easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
     });
     updateTickScales(newPosition);
   };
@@ -252,9 +252,10 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
         const steppedValue = Math.round(newValue / step) * step;
         const newPosition = (clampedDrag / RULER_HEIGHT) * RULER_HEIGHT;
 
+        // Smooth drag feedback with minimal delay
         cursorAnimY.value = withTiming(newPosition, {
-          duration: 100,
-          easing: Easing.out(Easing.quad),
+          duration: 50,
+          easing: Easing.linear,
         });
         updateTickScales(newPosition);
 
@@ -274,9 +275,10 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
         setValue(steppedValue);
         onValueChange?.(steppedValue);
 
+        // Smooth snap animation on release
         cursorAnimY.value = withTiming(newPosition, {
-          duration: 300,
-          easing: Easing.out(Easing.cubic),
+          duration: 200,
+          easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
         });
 
         ticksRef.current.forEach((tick) => {
