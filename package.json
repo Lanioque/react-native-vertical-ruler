@@ -26,16 +26,16 @@
     "reanimated",
     "component"
   ],
-  "author": "Your Name",
+  "author": "Alex Niokiz",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/react-native-vertical-ruler.git"
+    "url": "https://github.com/Lanioque/react-native-vertical-ruler.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/react-native-vertical-ruler/issues"
+    "url": "https://github.com/Lanioque/react-native-vertical-ruler/issues"
   },
-  "homepage": "https://github.com/yourusername/react-native-vertical-ruler#readme",
+  "homepage": "https://github.com/Lanioque/react-native-vertical-ruler#readme",
   "peerDependencies": {
     "react": "^18.0.0",
     "react-native": "^0.71.0",
