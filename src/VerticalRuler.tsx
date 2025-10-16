@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, PanResponder, Pressable } from 'react-native';
 import Animated, { 
   useSharedValue, 
@@ -71,6 +71,13 @@ export interface VerticalRulerConfig {
   onValueChange?: (value: number) => void;
 }
 
+export interface VerticalRulerHandle {
+  increment: () => void;
+  decrement: () => void;
+  setValue: (value: number) => void;
+  getValue: () => number;
+}
+
 interface VerticalRulerProps extends VerticalRulerConfig {}
 
 interface TickInfo {
@@ -127,7 +134,7 @@ const DEFAULT_CONFIG: Required<VerticalRulerConfig> = {
   onValueChange: (() => {}) as any,
 };
 
-const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
+const VerticalRulerComponent: React.ForwardRefRenderFunction<VerticalRulerHandle, VerticalRulerProps> = (props, ref) => {
   // Merge config with defaults
   const config = useMemo(() => ({
     ...DEFAULT_CONFIG,
@@ -187,6 +194,50 @@ const VerticalRuler: React.FC<VerticalRulerProps> = (props) => {
   useEffect(() => {
     valueRef.current = value;
   }, [value]);
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    increment: () => {
+      const newValue = Math.min(maxValue, value + step);
+      setValue(newValue);
+      valueRef.current = newValue;
+      onValueChange?.(newValue);
+
+      const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
+      cursorAnimY.value = withTiming(newPosition, {
+        duration: 50,
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+      });
+      updateTickScales(newPosition);
+    },
+    decrement: () => {
+      const newValue = Math.max(minValue, value - step);
+      setValue(newValue);
+      valueRef.current = newValue;
+      onValueChange?.(newValue);
+
+      const newPosition = ((maxValue - newValue) / (maxValue - minValue)) * RULER_HEIGHT;
+      cursorAnimY.value = withTiming(newPosition, {
+        duration: 50,
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+      });
+      updateTickScales(newPosition);
+    },
+    setValue: (newValue: number) => {
+      const clampedValue = Math.max(minValue, Math.min(maxValue, newValue));
+      setValue(clampedValue);
+      valueRef.current = clampedValue;
+      onValueChange?.(clampedValue);
+
+      const newPosition = ((maxValue - clampedValue) / (maxValue - minValue)) * RULER_HEIGHT;
+      cursorAnimY.value = withTiming(newPosition, {
+        duration: 200,
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
+      });
+      updateTickScales(newPosition);
+    },
+    getValue: () => value,
+  }), [value, step, minValue, maxValue, RULER_HEIGHT, onValueChange]);
 
   const updateTickScales = (cursorY: number) => {
     if (!enableMagnification || !ticksRef.current) return;
@@ -567,4 +618,4 @@ const styles = (colors: any, spacing: any, fontSize: any) =>
     },
   });
 
-export default React.memo(VerticalRuler);
+export default React.memo(forwardRef(VerticalRulerComponent));

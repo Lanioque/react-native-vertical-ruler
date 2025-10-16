@@ -209,6 +209,58 @@ const config: VerticalRulerConfig = {
 <VerticalRuler {...config} />;
 ```
 
+## Imperative Handle Methods
+
+You can programmatically control the ruler using a ref:
+
+```tsx
+import { useRef } from 'react';
+import { VerticalRuler, VerticalRulerHandle } from 'react-native-vertical-ruler';
+
+export default function MyComponent() {
+  const rulerRef = useRef<VerticalRulerHandle>(null);
+
+  return (
+    <>
+      <VerticalRuler
+        ref={rulerRef}
+        minValue={150}
+        maxValue={220}
+      />
+      
+      <Button
+        title="Increment"
+        onPress={() => rulerRef.current?.increment()}
+      />
+      <Button
+        title="Decrement"
+        onPress={() => rulerRef.current?.decrement()}
+      />
+      <Button
+        title="Set to 180"
+        onPress={() => rulerRef.current?.setValue(180)}
+      />
+      <Button
+        title="Get Value"
+        onPress={() => {
+          const currentValue = rulerRef.current?.getValue();
+          console.log('Current value:', currentValue);
+        }}
+      />
+    </>
+  );
+}
+```
+
+### Available Methods
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `increment()` | none | Increases value by the configured step |
+| `decrement()` | none | Decreases value by the configured step |
+| `setValue(value: number)` | value | Sets the ruler to a specific value (clamped to min/max) |
+| `getValue()` | none | Returns the current value |
+
 ## Performance
 
 - ✅ Memoized component to prevent unnecessary re-renders
