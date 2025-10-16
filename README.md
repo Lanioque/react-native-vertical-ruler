@@ -2,22 +2,17 @@
 
 A highly customizable, smooth vertical ruler component for React Native with magnification effects and precise value selection. Perfect for height measurements, weight selection, or any continuous value input.
 
-## Features
+## ✨ Features
 
-✨ **Smooth Animations** - Uses React Native Reanimated for 60fps animations
-🎯 **Precise Gestures** - Accurate touch handling with proper coordinate mapping
-🔍 **Magnification Effect** - macOS dock-style scaling of ticks near the cursor
-➕ **Increment/Decrement** - Built-in +/- buttons for fine adjustments
-🎨 **Fully Customizable** - Colors, sizes, spacing, fonts - all configurable
-📱 **Production Ready** - TypeScript support, comprehensive prop validation
+- **Smooth Animations** - Uses React Native Reanimated for 60fps animations
+- **Precise Gestures** - Accurate touch handling with proper coordinate mapping
+- **Magnification Effect** - macOS dock-style scaling of ticks near the cursor
+- **Increment/Decrement** - Built-in +/- buttons for fine adjustments
+- **Fully Customizable** - Colors, sizes, spacing, fonts, cursor - all configurable
+- **Production Ready** - TypeScript support, comprehensive prop validation
+- **Zero Runtime Dependencies** - Only requires React Native and Reanimated
 
-## Demo
-
-<img src="./Screenshot_20251016-044053.png" alt="Vertical Ruler Component Demo" width="400" />
-
-The component in action showing height measurement selection at 175.0 cm with smooth animations, magnification effects, and interactive +/- controls.
-
-## Installation
+## 📦 Installation
 
 ```bash
 npm install react-native-vertical-ruler react-native-reanimated
@@ -29,7 +24,7 @@ or with yarn:
 yarn add react-native-vertical-ruler react-native-reanimated
 ```
 
-## Quick Start
+## 🚀 Quick Start
 
 ```tsx
 import { VerticalRuler } from 'react-native-vertical-ruler';
@@ -48,9 +43,9 @@ export default function HeightSelector() {
 }
 ```
 
-## API Documentation
+## 📖 Complete API Documentation
 
-### Props
+### Configuration Props
 
 #### Value Configuration
 
@@ -67,7 +62,7 @@ export default function HeightSelector() {
 |------|------|---------|-------------|
 | `title` | string | 'Enter Your Height' | Title text shown above ruler |
 | `showDate` | boolean | true | Show current date below value |
-| `dateFormat` | DateTimeFormatOptions | See default | Intl date format options |
+| `dateFormat` | Intl.DateTimeFormatOptions | See default | Intl date format options |
 | `enableButtons` | boolean | true | Show +/- increment/decrement buttons |
 
 #### Ruler Configuration
@@ -94,6 +89,23 @@ export default function HeightSelector() {
 | `defaultUnitIndex` | number | 0 | Index of the initial unit to display |
 | `showUnitSwitcher` | boolean | false | Show interactive unit switcher buttons |
 
+#### Cursor Configuration
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `cursorProps` | CursorProps | See below | Customize cursor appearance |
+
+**CursorProps:**
+```typescript
+{
+  height?: number;           // Cursor bar height (default: 4)
+  width?: string | number;   // Cursor bar width (default: '100%')
+  marginTop?: number;        // Vertical offset (default: -2)
+  paddingLeft?: number;      // Horizontal padding (default: 8)
+  borderRadius?: number;     // Border radius (default: 6)
+}
+```
+
 #### Styling
 
 All styling is fully customizable:
@@ -105,8 +117,10 @@ All styling is fully customizable:
     primaryLight: '#EBDBD3',
     accent: '#D0BEA3',
     warning: '#F59E0B',
+    background: '#F5F4F7',
     textPrimary: '#1A1A1A',
     textSecondary: '#8F917C',
+    white: '#FFFFFF',
   }}
   spacing={{
     xs: 4,
@@ -123,6 +137,12 @@ All styling is fully customizable:
     lg: 18,
     xl: 20,
   }}
+  borderRadius={{
+    sm: 6,
+    md: 12,
+    lg: 16,
+    xl: 20,
+  }}
 />
 ```
 
@@ -131,8 +151,9 @@ All styling is fully customizable:
 | Prop | Type | Description |
 |------|------|-------------|
 | `onValueChange` | (value: number) => void | Called when value changes via drag or button |
+| `onUnitChange` | (unit: UnitConfig, unitIndex: number) => void | Called when unit is switched |
 
-## Advanced Examples
+## 💡 Advanced Examples
 
 ### Custom Styling for Weight
 
@@ -154,27 +175,24 @@ All styling is fully customizable:
 />
 ```
 
+### Customize Cursor Appearance
+
+```tsx
+<VerticalRuler
+  cursorProps={{
+    height: 6,
+    marginTop: -3,
+    paddingLeft: 10,
+    borderRadius: 8,
+  }}
+/>
+```
+
 ### Disabled Magnification
 
 ```tsx
 <VerticalRuler
   enableMagnification={false}
-  // ... other props
-/>
-```
-
-### Custom Date Format
-
-```tsx
-<VerticalRuler
-  showDate={true}
-  dateFormat={{
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  }}
-  // ... other props
 />
 ```
 
@@ -212,7 +230,7 @@ All styling is fully customizable:
 />
 ```
 
-### Custom Units with Custom Conversion Functions
+### Custom Units with Conversion Functions
 
 ```tsx
 import { VerticalRuler, UnitConfig } from 'react-native-vertical-ruler';
@@ -254,78 +272,9 @@ export default function WeightSelector() {
 }
 ```
 
-### Programmatic Unit Switching
+## 🎛️ Imperative Handle Methods
 
-```tsx
-import { useRef } from 'react';
-import { VerticalRuler, VerticalRulerHandle, UnitConfig } from 'react-native-vertical-ruler';
-
-export default function MyComponent() {
-  const rulerRef = useRef<VerticalRulerHandle>(null);
-  
-  const customUnits: UnitConfig[] = [
-    {
-      label: 'Kilograms',
-      symbol: 'kg',
-      convertTo: (value, targetUnit) => {
-        if (targetUnit.symbol === 'lbs') return value * 2.20462;
-        return value;
-      },
-    },
-    {
-      label: 'Pounds',
-      symbol: 'lbs',
-      convertTo: (value, targetUnit) => {
-        if (targetUnit.symbol === 'kg') return value / 2.20462;
-        return value;
-      },
-    },
-  ];
-
-  return (
-    <>
-      <VerticalRuler
-        ref={rulerRef}
-        units={customUnits}
-        minValue={40}
-        maxValue={150}
-      />
-      <Button
-        title="Switch to Pounds"
-        onPress={() => rulerRef.current?.switchUnit(1)}
-      />
-      <Button
-        title="Get Current Unit"
-        onPress={() => {
-          const unit = rulerRef.current?.getCurrentUnit();
-          console.log('Current unit:', unit);
-        }}
-      />
-    </>
-  );
-}
-```
-
-## TypeScript Support
-
-Full TypeScript support is included:
-
-```tsx
-import { VerticalRuler, VerticalRulerConfig } from 'react-native-vertical-ruler';
-
-const config: VerticalRulerConfig = {
-  minValue: 150,
-  maxValue: 220,
-  step: 1,
-  onValueChange: (value: number) => console.log(value),
-};
-
-<VerticalRuler {...config} />;
-```
-
-## Imperative Handle Methods
-
-You can programmatically control the ruler using a ref:
+Control the ruler programmatically using a ref:
 
 ```tsx
 import { useRef } from 'react';
@@ -374,27 +323,61 @@ export default function MyComponent() {
 | `decrement()` | none | Decreases value by the configured step |
 | `setValue(value: number)` | value | Sets the ruler to a specific value (clamped to min/max) |
 | `getValue()` | none | Returns the current value |
+| `switchUnit(index: number)` | index | Switch to a different unit by index |
+| `getCurrentUnit()` | none | Get the current unit configuration |
 
-## Performance
+## 🔐 TypeScript Support
+
+Full TypeScript support is included:
+
+```tsx
+import { VerticalRuler, VerticalRulerConfig } from 'react-native-vertical-ruler';
+
+const config: VerticalRulerConfig = {
+  minValue: 150,
+  maxValue: 220,
+  step: 1,
+  onValueChange: (value: number) => console.log(value),
+};
+
+<VerticalRuler {...config} />;
+```
+
+## ⚡ Performance
 
 - ✅ Memoized component to prevent unnecessary re-renders
 - ✅ Uses React Native Reanimated for smooth 60fps animations
 - ✅ Efficient gesture handling with native driver animations
 - ✅ Optimized tick rendering and magnification calculations
 
-## Browser Support
+## 🌐 Browser Support
 
 - iOS 12+
 - Android 8+
 
-## Contributing
+## 📋 Dependencies
+
+### Peer Dependencies (required)
+- `react: ^18.0.0 || ^19.0.0`
+- `react-native: >=0.71.0`
+- `react-native-reanimated: ^3.0.0 || ^4.0.0`
+
+### Runtime Dependencies
+None! This package only depends on standard React Native libraries.
+
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+## 📄 License
 
 MIT
 
-## Support
+## 🔗 Links
 
-For issues and feature requests, please visit the [GitHub repository](https://github.com/yourusername/react-native-vertical-ruler).
+- **GitHub**: https://github.com/Lanioque/react-native-vertical-ruler
+- **NPM**: https://www.npmjs.com/package/react-native-vertical-ruler
+
+## 💬 Support
+
+For issues and feature requests, please visit the [GitHub repository](https://github.com/Lanioque/react-native-vertical-ruler/issues).
